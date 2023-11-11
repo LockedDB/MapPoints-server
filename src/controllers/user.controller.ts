@@ -14,7 +14,6 @@ export default class UserController {
     try {
       const user: User = req.body;
       const savedUser = await userRepository.save(user);
-      console.log("savedUser: ", savedUser);
 
       res.status(201).send(savedUser);
     } catch (err) {
