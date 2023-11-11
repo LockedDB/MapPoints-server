@@ -27,6 +27,7 @@ class UserRepository implements IUserRepository {
       );
     });
   }
+
   retrieveById(userId: string): Promise<User | undefined> {
     return new Promise((resolve, reject) => {
       connection.query<User[]>(
@@ -39,14 +40,41 @@ class UserRepository implements IUserRepository {
       );
     });
   }
+
   update(user: User): Promise<number> {
-    throw new Error("Method not implemented.");
+    const { id, displayName, email, phone } = user;
+    return new Promise((resolve, reject) => {
+      connection.query<ResultSetHeader>(
+        "UPDATE user SET displayName = ?, email = ?, phone = ? WHERE id = ?",
+        [displayName, email, phone, id],
+        (err, result) => {
+          if (err) reject(err);
+          else resolve(result.affectedRows);
+        }
+      );
+    });
   }
+
   delete(userId: string): Promise<number> {
-    throw new Error("Method not implemented.");
+    return new Promise((resolve, reject) => {
+      connection.query<ResultSetHeader>(
+        "DELETE FROM user WHERE id = ?",
+        [userId],
+        (err, result) => {
+          if (err) reject(err);
+          else resolve(result.affectedRows);
+        }
+      );
+    });
   }
+
   deleteAll(): Promise<number> {
-    throw new Error("Method not implemented.");
+    return new Promise((resolve, reject) => {
+      connection.query<ResultSetHeader>("DELETE FROM user", (err, result) => {
+        if (err) reject(err);
+        else resolve(result.affectedRows);
+      });
+    });
   }
 }
 

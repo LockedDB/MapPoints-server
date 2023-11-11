@@ -1,30 +1,27 @@
 import { Router } from "express";
-import TutorialController from "../controllers/tutorial.controller";
+import UserController from "../controllers/user.controller";
 
-class TutorialRoutes {
+class UserRoutes {
   router = Router();
-  controller = new TutorialController();
+  controller = new UserController();
 
   constructor() {
     this.intializeRoutes();
   }
 
   intializeRoutes() {
-    // Create a new Tutorial
+    // Create a new User
     this.router.post("/", this.controller.create);
 
-    // Retrieve all Tutorials
-    this.router.get("/", this.controller.findAll);
-
-    // Retrieve a single Tutorial with id
+    // Retrieve a single User with id
     this.router.get("/:id", this.controller.findOne);
 
-    // Update a Tutorial with id
+    // Update a User with id
     this.router.put("/:id", this.controller.update);
 
-    // Delete a Tutorial with id
+    // Delete a User with id
     this.router.delete("/:id", this.controller.delete);
   }
 }
 
-export default new TutorialRoutes().router;
+export default new UserRoutes().router;
