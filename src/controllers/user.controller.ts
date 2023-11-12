@@ -25,7 +25,7 @@ export default class UserController {
 
   async findOne(req: Request, res: Response) {
     try {
-      const user = await userRepository.retrieveById(req.params.id);
+      const user = await userRepository.retrieveById(parseInt(req.params.id));
       if (user) {
         res.status(200).json(user);
       } else {
@@ -39,7 +39,7 @@ export default class UserController {
   }
 
   async update(req: Request, res: Response) {
-    const userId = req.params.id;
+    const userId = parseInt(req.params.id);
     const updatedData: Exclude<User, "userId"> = req.body;
 
     if (!updatedData.displayName) {
@@ -68,7 +68,7 @@ export default class UserController {
   }
 
   async delete(req: Request, res: Response) {
-    const userId = req.params.id;
+    const userId = parseInt(req.params.id);
 
     try {
       const affectedRows = await userRepository.delete(userId);

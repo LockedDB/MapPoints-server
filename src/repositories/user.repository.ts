@@ -4,31 +4,33 @@ import { ResultSetHeader } from "mysql2";
 
 interface IUserRepository {
   save(user: User): Promise<User>;
-  retrieveById(userId: string): Promise<User | undefined>;
+  retrieveById(userId: number): Promise<User | undefined>;
   update(user: User): Promise<number>;
-  delete(userId: string): Promise<number>;
+  delete(userId: number): Promise<number>;
   deleteAll(): Promise<number>;
 }
 
 class UserRepository implements IUserRepository {
   save(user: User): Promise<User> {
-    const { id, displayName, email, phone } = user;
+    const { displayName, email, phone } = user;
     return new Promise((resolve, reject) => {
       connection.query<ResultSetHeader>(
-        "INSERT INTO user (id, displayName, email, phone) VALUES (?,?,?,?)",
-        [id, displayName, email, phone],
+        "INSERT INTO user (displayName, email, phone) VALUES (?, ?, ?)",
+        [displayName, email, phone],
         (err, res) => {
           if (err) reject(err);
-          else
-            this.retrieveById(id)
+          else {
+            const insertedId = res.insertId;
+            this.retrieveById(insertedId)
               .then((user) => resolve(user!))
               .catch(reject);
+          }
         }
       );
     });
   }
 
-  retrieveById(userId: string): Promise<User | undefined> {
+  retrieveById(userId: number): Promise<User | undefined> {
     return new Promise((resolve, reject) => {
       connection.query<User[]>(
         "SELECT * FROM user WHERE id = ?",
@@ -55,7 +57,7 @@ class UserRepository implements IUserRepository {
     });
   }
 
-  delete(userId: string): Promise<number> {
+  delete(userId: number): Promise<number> {
     return new Promise((resolve, reject) => {
       connection.query<ResultSetHeader>(
         "DELETE FROM user WHERE id = ?",

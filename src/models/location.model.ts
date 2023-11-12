@@ -1,7 +1,7 @@
 import { RowDataPacket } from "mysql2";
 
 export interface Location extends RowDataPacket {
-  id: string;
+  id: number;
   name: string;
   description?: string;
   latitude: number;

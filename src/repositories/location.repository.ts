@@ -4,33 +4,34 @@ import { ResultSetHeader } from "mysql2";
 
 interface ILocationRepository {
   save(location: Location): Promise<Location>;
-  retrieveById(locationId: string): Promise<Location | undefined>;
-  retrieveByUserId(userId: string): Promise<Location[] | undefined>;
+  retrieveById(locationId: number): Promise<Location | undefined>;
+  retrieveByUserId(userId: number): Promise<Location[] | undefined>;
   update(location: Location): Promise<number>;
-  delete(locationId: string): Promise<number>;
+  delete(locationId: number): Promise<number>;
 }
 
 class LocationRepository implements ILocationRepository {
   save(location: Location): Promise<Location> {
-    const { id, name, description, latitude, longitude, google_maps_id } =
-      location;
+    const { name, description, latitude, longitude, google_maps_id } = location;
 
     return new Promise((resolve, reject) => {
       connection.query<ResultSetHeader>(
-        "INSERT INTO location (id, name, description, latitude, longitude, google_maps_id) VALUES (?, ?, ?, ?, ?, ?)",
-        [id, name, description, latitude, longitude, google_maps_id],
+        "INSERT INTO location (name, description, latitude, longitude, google_maps_id) VALUES (?, ?, ?, ?, ?)",
+        [name, description, latitude, longitude, google_maps_id],
         (err, res) => {
           if (err) reject(err);
-          else
-            this.retrieveById(id)
-              .then((location) => resolve(location!))
+          else {
+            const insertedId = res.insertId;
+            this.retrieveById(insertedId)
+              .then((retrievedLocation) => resolve(retrievedLocation!))
               .catch(reject);
+          }
         }
       );
     });
   }
 
-  retrieveById(locationId: string): Promise<Location | undefined> {
+  retrieveById(locationId: number): Promise<Location | undefined> {
     return new Promise((resolve, reject) => {
       connection.query<Location[]>(
         "SELECT * FROM location WHERE id = ?",
@@ -43,7 +44,7 @@ class LocationRepository implements ILocationRepository {
     });
   }
 
-  retrieveByUserId(userId: string): Promise<Location[] | undefined> {
+  retrieveByUserId(userId: number): Promise<Location[] | undefined> {
     throw new Error("Method not implemented.");
   }
 
@@ -51,7 +52,7 @@ class LocationRepository implements ILocationRepository {
     throw new Error("Method not implemented.");
   }
 
-  delete(locationId: string): Promise<number> {
+  delete(locationId: number): Promise<number> {
     throw new Error("Method not implemented.");
   }
 }
