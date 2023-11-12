@@ -11,7 +11,7 @@ class LocationRoutes {
 
   intializeRoutes() {
     // Create a new Location
-    this.router.post("/", this.controller.create);
+    this.router.post("/:listId", this.controller.create);
 
     // Retrieve all locations
     this.router.get("/:id", this.controller.findAll);

@@ -4,7 +4,7 @@ import locationRepository from "../repositories/location.repository";
 
 export default class LocationController {
   async create(req: Request, res: Response) {
-    if (!req.body.name) {
+    if (!req.body.name || !req.params.listId) {
       res.status(400).send({
         message: "Content cannot be empty!",
       });
@@ -13,7 +13,10 @@ export default class LocationController {
 
     try {
       const location: Location = req.body;
-      const savedLocation = await locationRepository.save(location);
+      const savedLocation = await locationRepository.save(
+        location,
+        req.params.listId
+      );
 
       res.status(201).send(savedLocation);
     } catch (err) {
